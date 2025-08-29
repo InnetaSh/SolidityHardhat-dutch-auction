@@ -1,0 +1,16 @@
+{
+  "name": "chain",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",   
+  "scripts": {
+    "compile": "hardhat compile",
+    "node": "hardhat node",
+    "deploy:local": "hardhat run scripts/deploy.js --network localhost"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.12"
+  }
+
+}

@@ -1,0 +1,53 @@
+﻿<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Dutch auction</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+
+    <p id="status">Status: not connected</p
+    <div>Address: <code id="contractAddr"></code></div>
+
+    <h1>Dutch Auction Interface</h1>
+
+    <section id="create-auction">
+        <h2>Create Auction</h2>
+        <input type="text" id="item" placeholder="Item description" />
+        <input type="number" id="startingPrice" placeholder="Starting Price (wei)" />
+        <input type="number" id="discountRate" placeholder="Discount Rate (wei/second)" />
+        <input type="number" id="duration" placeholder="Duration (seconds)" />
+        <button id="createBtn">Create Auction</button>
+    </section>
+
+    <section id="buy-auction">
+        <h2>Buy from Auction</h2>
+
+        <select id="id_auctionIndex">
+        </select>
+
+
+
+        <button id="buyBtn">Buy</button>
+        <div id="error" class="errorText">
+            
+        </div>
+    </section>
+
+    <section id="auction-info">
+        <h2>Auction Info</h2>
+        <input type="number" id="infoIndex" placeholder="Auction Index" />
+        <button id="infoBtn">Get Info</button>
+        <pre id="infoOutput"></pre>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.6.3/dist/ethers.umd.min.js"></script>
+    <script type="module" src="app.js"></script>
+</body>
+</html>
