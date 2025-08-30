@@ -165,6 +165,14 @@ contract AucEngine {
         emit OwnerFeeWithdrawn(owner, fee, index);
     }
 
+    function stopAuctionIfExpired(uint index) external {
+        Auction storage auc = auctions[index];
+        require(!auc.stopped, "Auction already stopped");
+        require(block.timestamp >= auc.endsAt, "Auction not yet expired");
+        
+        auc.stopped = true;
+    }
+
 
     function getAuctionsLength() external view returns (uint) {
         return auctionsCount;

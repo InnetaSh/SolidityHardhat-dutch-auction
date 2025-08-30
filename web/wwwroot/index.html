@@ -10,13 +10,21 @@
 
 <body>
 
+    <div class="head-container">
+        <p id="status">Status: not connected</p>
+        <div>Address: <code id="contractAddr"></code></div>
 
-    <p id="status">Status: not connected</p
-    <div>Address: <code id="contractAddr"></code></div>
+        <h1>Dutch Auction </h1>
+        <div class="headBtn-container">
 
-    <h1>Dutch Auction Interface</h1>
+            <button id="showCreateBtn" class="headBtn">Create Auction</button>
+            <button id="showChoiseBtn" class="headBtn">Choise Auction</button>
+        </div>
+    </div>
 
-    <section id="create-auction">
+
+
+    <section id="create-auction" class="non-display">
         <h2>Create Auction</h2>
         <input type="text" id="item" placeholder="Item description" />
         <input type="number" id="startingPrice" placeholder="Starting Price (wei)" />
@@ -25,19 +33,39 @@
         <button id="createBtn">Create Auction</button>
     </section>
 
-    <section id="buy-auction">
+    <section id="buy-auction" class="non-display">
         <h2>Buy from Auction</h2>
 
         <select id="id_auctionIndex">
         </select>
 
 
+        <button id="choiseBtn">Choise Auctions</button>
 
-        <button id="buyBtn">Buy</button>
+
         <div id="error" class="errorText">
-            
+
         </div>
     </section>
+
+    <section id="info-auction" class="non-display">
+        <h2 id="auction-item">  </h2>
+
+        <div id="auction-startAt"></div>
+        <div id="auction-endsAt"></div>
+        <div id="auction-startingPrice"></div>
+
+        <div id="auction-priceNow"></div>
+
+        <div id="auction-stopped" class="errorText"></div>
+
+
+
+        <button id="buyBtn">Buy</button>
+        <h3 id="error" class="errorText"> </h3>
+    </section>
+
+
 
     <section id="auction-info">
         <h2>Auction Info</h2>

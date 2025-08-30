@@ -5,7 +5,7 @@ body {
     background-color: #121212;
     color: #e0e0e0;
     margin: 0;
-    padding: 20px;
+    padding: 0;
 }
 
 h1 {
@@ -77,9 +77,37 @@ button {
         box-shadow: 0 6px 16px rgba(136, 192, 208, 0.8);
     }
 
+.head-container {
+    background-color: #1c1c1c;
+    width: 100%;
+    padding: 20px;
+    margin-bottom:10px;
+}
 .connect-btn {
     width: 100px;
     font-size: 0.8rem;
+}
+
+.headBtn-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 80%;
+    margin: 20px auto;
+}
+
+.headBtn {
+    background-color: #81a1c1;
+    border: none;
+    color: #2e3440;
+    padding: 14px 25px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    width: 30%;
+    font-weight: 700;
+    box-shadow: 0 1px 5px rgba(129, 161, 193, 0.6);
 }
 
 pre#infoOutput {
@@ -109,4 +137,8 @@ pre#infoOutput {
     font-weight: 700;
     margin-top: 10px;
     text-align: center;
+}
+
+.non-display {
+    display: none !important;
 }
