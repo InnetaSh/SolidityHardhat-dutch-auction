@@ -2,6 +2,8 @@
  
     const contractAddrEl = document.getElementById('contractAddr');
     const errorDiv = document.getElementById('error');
+
+    const auctionInfoSection = document.getElementById('auction-startPage');
     
     const showCreateBtn = document.getElementById('showCreateBtn');
     const showChoiseBtn = document.getElementById('showChoiseBtn');
@@ -9,7 +11,6 @@
 
     document.getElementById('createBtn').onclick = createAuction;
     document.getElementById('buyBtn').onclick = buyAuction;
-    document.getElementById('infoBtn').onclick = getAuctionInfo;
     
 
 
@@ -56,23 +57,25 @@
     }
 
     async function createAuction() {
-      try {
-        const item = document.getElementById("item").value;
-        const startingPrice = ethers.parseUnits(document.getElementById("startingPrice").value, "wei");
-        const discountRate = ethers.parseUnits(document.getElementById("discountRate").value, "wei");
-        const duration = Number(document.getElementById("duration").value);
+        try {
+            const item = document.getElementById("item").value;
+            const startingPrice = ethers.parseUnits(document.getElementById("startingPrice").value, "wei");
+            const discountRate = ethers.parseUnits(document.getElementById("discountRate").value, "wei");
+            const duration = Number(document.getElementById("duration").value);
 
-        const tx = await contract.createAuction(startingPrice, discountRate, item, duration);
-        await tx.wait();
-        alert("Auction created!");
-          } catch (e) {
-            alert("Error: " + e.message);
-          }
+            const tx = await contract.createAuction(startingPrice, discountRate, item, duration);
+            await tx.wait();
+            alert("Auction created!");
+              } catch (e) {
+                alert("Error: " + e.message);
+        }
+        await loadAuctions();
     }
 
 
     async function choiseAuction() {
         try {
+            auctionInfoSection.classList.add('non-display');
             const select = document.getElementById('id_auctionIndex');
             const index = select.value;
 
@@ -111,25 +114,55 @@
                 const tx = await contract.stopAuctionIfExpired(index);
                 await tx.wait(); 
 
-              
+                clearInterval(priceInterval);
+                document.getElementById('auction-priceNow').textContent = `Final price: ${finalPrice.toString()} wei`;
+                document.getElementById('buyBtn').classList.add('non-display');
+                document.getElementById('auction-winner').textContent = `Winner: ${winner.toString()}`;
+
+
                 document.getElementById('auction-stopped').textContent = `Auction has expired and was stopped automatically.`;
             } else if (stopped) {
                 document.getElementById('auction-stopped').textContent = `Auction is already stopped.`;
+
+                clearInterval(priceInterval);
+                document.getElementById('auction-priceNow').textContent = `Final price: ${finalPrice.toString()} wei`;
+                document.getElementById('buyBtn').classList.add('non-display');
+                document.getElementById('auction-winner').textContent = `Winner: ${winner.toString()}`;
             } else {
                 document.getElementById('auction-stopped').textContent = ``;
             }
 
 
-            console.log(stopped);
-           
-            if (priceInterval) clearInterval(priceInterval);
+            console.log("Auction stopped status:", stopped);
+
+            if (priceInterval) {
+                console.log("Clearing previous price interval");
+                clearInterval(priceInterval);
+            }
+            console.log("Setting price interval");
           
             priceInterval = setInterval(async () => {
                 try {
-                    const priceNow = await contract.getPriceFor(index);
-                    document.getElementById('auction-priceNow').textContent = `Current price: ${priceNow.toString()} wei`;
+                    if (stopped) { 
+                        clearInterval(priceInterval);
+                        console.log("Auction is stopped, clearing price interval");
+                        document.getElementById('auction-priceNow').textContent = `Final price: ${finalPrice.toString()} wei`;
+                        document.getElementById('buyBtn').classList.add('non-display');
+                        document.getElementById('auction-winner').textContent = `Winner: ${winner.toString()}`;
+                        return;
+                    }
+
+                    const nowUpdated = BigInt(Math.floor(Date.now() / 1000)); 
+                    const priceNow = startingPrice - (nowUpdated - BigInt(startAt)) * BigInt(discountRate);
+
+                    console.log("priceNow");
+                    
+                    console.log("Calculated priceNow:", priceNow); 
+
+                    document.getElementById('auction-priceNow').textContent = `Current price: ${priceNow} wei`;
 
                 } catch (e) {
+                    console.error("Error inside interval: ", e); 
                     document.getElementById('auction-priceNow').textContent = `Error fetching price`;
                     clearInterval(priceInterval);
                 }
@@ -149,6 +182,7 @@
             isStopped = await contract.getAuctionIsStopped(index);
             console.log(isStopped);
 
+
             if (isStopped) {
                 errorDiv.textContent = 'Auction is stopped.';
 
@@ -160,6 +194,8 @@
       
             const price = await contract.getPriceFor(index);
 
+            clearInterval(priceInterval);
+
             const tx = await contract.buy(index, {value: price });
             await tx.wait();
             alert("Auction bought!");
@@ -168,28 +204,6 @@
               }
     }
 
-    async function getAuctionInfo() {
-      try {
-        const index = Number(document.getElementById("infoIndex").value);
-        const auction = await contract.getAuction(index);
-
-        document.getElementById("infoOutput").textContent = JSON.stringify({
-            seller: auction.seller,
-            startingPrice: auction.startingPrice.toString(),
-            finalPrice: auction.finalPrice.toString(),
-            startAt: new Date(auction.startAt * 1000).toLocaleString(),
-            endsAt: new Date(auction.endsAt * 1000).toLocaleString(),
-            discountRate: auction.discountRate.toString(),
-            item: auction.item,
-            stopped: auction.stopped,
-            withdrawn: auction.withdrawn,
-            feeWithdrawn: auction.feeWithdrawn,
-            winner: auction.winner,
-                }, null, 2);
-              } catch (e) {
-                alert("Error: " + e.message);
-              }
-    }
 
 
     async function loadAuctions() {
@@ -212,11 +226,12 @@
            
             select.appendChild(option);
         }
-        if (!res.ok) { log('contractConfig.json not found. Deploy the contract first.'); return; }
+        
     }
 
 
     function showCreateContainer() {
+        auctionInfoSection.classList.toggle('non-display');
         const container = document.getElementById('create-auction');
         const isHidden = container.classList.toggle('non-display');
 
@@ -224,6 +239,7 @@
         showCreateBtn.textContent = isHidden ? 'Create Auction' : 'Close Create Auction';
     }
     function showChoiseContainer() {
+        auctionInfoSection.classList.toggle('non-display');
         const container = document.getElementById('buy-auction');
         const isHidden = container.classList.toggle('non-display');
 

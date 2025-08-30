@@ -26,6 +26,11 @@
 
     <section id="create-auction" class="non-display">
         <h2>Create Auction</h2>
+        <div>
+            <h3>Создайте свой аукцион и начните торги!</h3>
+            Здесь вы можете легко и быстро запустить свой голландский аукцион. Установите начальную цену, укажите минимальные шаги снижения и выберите время для проведения аукциона. Управляйте лотами, привлекайте участников и наблюдайте за процессом снижения цены.
+            <br/> Удачных торгов и выгодных сделок!
+        </div>
         <input type="text" id="item" placeholder="Item description" />
         <input type="number" id="startingPrice" placeholder="Starting Price (wei)" />
         <input type="number" id="discountRate" placeholder="Discount Rate (wei/second)" />
@@ -56,6 +61,7 @@
         <div id="auction-startingPrice"></div>
 
         <div id="auction-priceNow"></div>
+        <div id="auction-winner"></div>
 
         <div id="auction-stopped" class="errorText"></div>
 
@@ -67,11 +73,20 @@
 
 
 
-    <section id="auction-info">
-        <h2>Auction Info</h2>
-        <input type="number" id="infoIndex" placeholder="Auction Index" />
-        <button id="infoBtn">Get Info</button>
-        <pre id="infoOutput"></pre>
+    <section id="auction-startPage">
+        <h2>Dutch Auction info</h2>
+        <div>
+            <h3>Добро пожаловать на нашу платформу голландских аукционов!</h3><br />
+            Здесь вы найдете уникальную возможность приобретать товары по невероятно выгодным ценам. Мы предлагаем вам новый, динамичный формат аукционов, где цена снижается с каждым моментом, а ваша ставка решает, кто станет победителем.
+            <br />
+            <br />
+            <b>Как это работает?</b>
+            <br />
+            Аукционы начинаются с высокой цены и постепенно уменьшаются, пока кто-то не сделает ставку, фиксируя за собой товар по текущей цене. Чем быстрее вы примете решение — тем выгоднее будет для вас!
+            <br />
+            <br />
+            Присоединяйтесь, ставьте ставки и наслаждайтесь процессом. Удачи в ваших покупках и новых сделках!
+        </div>
     </section>
 
     <script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.min.js"></script>
