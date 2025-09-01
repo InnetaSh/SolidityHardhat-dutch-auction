@@ -174,6 +174,11 @@ contract AucEngine {
     }
 
 
+    function getContractBalance() external view returns (uint) {
+        return address(this).balance;
+    }
+
+
     function getAuctionsLength() external view returns (uint) {
         return auctionsCount;
     }

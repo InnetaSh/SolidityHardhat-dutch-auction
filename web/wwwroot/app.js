@@ -1,6 +1,7 @@
 ﻿(async function () {
  
     const contractAddrEl = document.getElementById('contractAddr');
+    const contractBal = document.getElementById('contractBal');
     const errorDiv = document.getElementById('error');
 
     const auctionInfoSection = document.getElementById('auction-startPage');
@@ -10,6 +11,11 @@
     const showChoiseBtn = document.getElementById('showChoiseBtn');
     const showAccauntBtn = document.getElementById('showAccauntBtn');
     const choiseBtn = document.getElementById('choiseBtn');
+
+    const WithdrawBtn = document.getElementById('WithdrawBtn');
+
+    const closeBuyAuctionBtn = document.getElementById('closeBuyAuctionBtn');
+    const closeCreateAuctionBtn = document.getElementById('closeCreateAuctionBtn');
 
     const buyBtn = document.getElementById('buyBtn');
     const createBtn = document.getElementById('createBtn');
@@ -33,6 +39,8 @@
             }
         cfg = await res.json();
         contractAddrEl.textContent = cfg.address;
+
+       
      }
 
 
@@ -53,7 +61,13 @@
         contract = new ethers.Contract(cfg.address, cfg.abi, signer);
 
 
-            await loadAuctions();
+     
+            const bal = await contract.getContractBalance();
+            console.log(bal);
+            contractBal.textContent = bal;
+
+
+        await loadAuctions();
 
         } catch (e) {
             alert("Error: " + e.message);
@@ -140,6 +154,12 @@
                 document.getElementById('auction-priceNow').textContent = `Final price: ${finalPrice.toString()} wei`;
                 document.getElementById('buyBtn').classList.add('non-display');
                 document.getElementById('auction-winner').textContent = `Winner: ${winner.toString()}`;
+
+                const userAddress = await signer.getAddress();
+                if (userAddress.toLowerCase() === seller.toLowerCase()) {
+                    WithdrawBtn.classList.remove('non-display');
+                }
+
             } else {
                 document.getElementById('auction-stopped').textContent = ``;
             }
@@ -238,7 +258,7 @@
         const select = document.getElementById('id_auctionIndex');
         const auctionsCount = await contract.getAuctionsLength();
 
-        select.innerHTML = '<option value="">Buy from Auction</option>';
+        select.innerHTML = '<option value="">Choise auction:</option>';
 
         const count = Number(auctionsCount);
         console.log(count);
@@ -258,20 +278,40 @@
 
 
     function showCreateContainer() {
-        auctionInfoSection.classList.toggle('non-display');
         const container = document.getElementById('create-auction');
-        const isHidden = container.classList.toggle('non-display');
+        document.getElementById('buy-auction').classList.add('non-display');
+        const isHidden = container.classList.remove('non-display');
+        
+        auctionInfoSection.classList.add('non-display');
+        
+    }
 
+    function closeCreateContainer() {
+        const container = document.getElementById('create-auction');
+        document.getElementById('buy-auction').classList.add('non-display');
+        const isHidden = container.classList.add('non-display');
+        
+        auctionInfoSection.classList.remove('non-display');
       
-        showCreateBtn.textContent = isHidden ? 'Create Auction' : 'Close create Auction';
     }
     function showChoiseContainer() {
-        auctionInfoSection.classList.toggle('non-display');
+        document.getElementById('create-auction').classList.add('non-display');
         const container = document.getElementById('buy-auction');
-        const isHidden = container.classList.toggle('non-display');
+        const isHidden = container.classList.remove('non-display');
 
       
-        showChoiseBtn.textContent = isHidden ? 'Buy from Auction' : 'Close buy from Auction';
+        auctionInfoSection.classList.add('non-display');
+        
+    }
+
+    function closeChoiseContainer() {
+        document.getElementById('create-auction').classList.add('non-display');
+        const container = document.getElementById('buy-auction');
+        const isHidden = container.classList.add('non-display');
+        
+       
+        auctionInfoSection.classList.remove('non-display');
+      
     }
 
     function showAccauntInfoContainer() {
@@ -284,7 +324,9 @@
 
 
     showCreateBtn.addEventListener('click', showCreateContainer);
+    closeCreateAuctionBtn.addEventListener('click', closeCreateContainer);
     showChoiseBtn.addEventListener('click', showChoiseContainer);
+    closeBuyAuctionBtn.addEventListener('click', closeChoiseContainer);
     showAccauntBtn.addEventListener('click', showAccauntInfoContainer);
     choiseBtn.addEventListener('click', choiseAuction);
 

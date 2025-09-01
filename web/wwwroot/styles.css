@@ -8,6 +8,37 @@ body {
     padding: 0;
 }
 
+.flex {
+    display: flex;
+    flex-direction: row;
+    justify-content:center;
+    align-items: inherit;
+}
+.flex-column{
+    display: flex;
+    flex-direction: column;
+    -webkit-justify-content: space-around;
+    justify-content: space-around;
+    align-items:end;
+}
+
+.img-back {
+    position: absolute;
+    bottom: 20px;
+    right: 10%;
+    z-index: -1;
+    height: 50%;
+
+}
+.img-head {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    height:100%;
+    width:65%;
+}
+
 h1 {
     text-align: center;
     color: #81a1c1;
@@ -17,21 +48,28 @@ h1 {
 }
 
 section {
-    background-color: #1e1e1e;
+    background-color: rgba(30, 30, 30, 0.7);
     width: 70%;
     min-width: 500px;
-    margin: 0 auto 40px auto;
+    margin: 10px auto 50px auto;
     padding: 25px 35px;
     border-radius: 12px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
     border: 1px solid #2e3440;
 }
 
+.info-auction-title {
+    border-bottom: 2px solid #81a1c1;
+    display: flex;
+    justify-content: space-around;
+    -webkit-align-items: inherit;
+    align-items: inherit;
+}
+
 section h2 {
     margin-top: 0;
     margin-bottom: 20px;
     color: #88c0d0;
-    border-bottom: 2px solid #81a1c1;
     padding-bottom: 8px;
     font-weight: 600;
 }
@@ -48,6 +86,7 @@ select {
     background-color: #2e3440;
     color: #d8dee9;
     transition: border-color 0.3s ease, background-color 0.3s ease;
+  
 }
 
     input[type="text"]:focus,
@@ -72,11 +111,43 @@ button {
     box-shadow: 0 4px 12px rgba(129, 161, 193, 0.6);
 }
 
+.button-small{
+    width: 150px;
+    font-size: 0.9rem;
+    height:40px;
+}
+button:hover {
+    background-color: #88c0d0;
+    color: #1e1e1e;
+    box-shadow: 0 6px 16px rgba(136, 192, 208, 0.8);
+}
 
-    button:hover {
-        background-color: #88c0d0;
-        color: #1e1e1e;
-        box-shadow: 0 6px 16px rgba(136, 192, 208, 0.8);
+#buy-auction,
+#create-auction {
+    position: relative;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 20px;
+    font-weight: bold;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #333;
+    width: 20px;
+    height: 20px;
+    padding: 15px;
+    display: flex;
+    -webkit-justify-content: center;
+    justify-content: center;
+    align-items:center;
+}
+
+    .close-button:hover {
+        color: red;
     }
 
 
@@ -84,16 +155,29 @@ button {
 .head-container {
     background-color: #1c1c1c;
     width: 100%;
-    padding: 20px;
-    margin-bottom:10px;
+    padding-top: 10px;
+    padding-bottom: 30px;
+    margin-bottom: 30px;
+    position: relative;
+    z-index: 1;
 }
 
+.head-section {
+    width: 80%;
+    height:200px;
+    margin-left: 10%;
+    display: flex;
+    flex-direction: row;
+    justify-content:end;
+    align-items: inherit;
+   
+}
 
 .buttonRef {
     background-color: transparent;
     border: none;
-    color: #81a1c1;
-    height:50px;
+    color: #1c1c1c;
+    height: 50px;
     padding: auto 25px;
     border-radius: 8px;
     font-size: 1.1rem;
@@ -103,6 +187,7 @@ button {
     font-weight: 700;
     box-shadow: none;
     text-decoration: underline;
+    margin-left: 20px;
 }
     .buttonRef:hover {
         background-color: transparent;
@@ -118,11 +203,13 @@ button {
 }
 
 .headBtn-container {
+    width: 30%;
+    margin-left: 20px;
     display: flex;
-    justify-content: space-around;
-    align-items: center;
-    width: 80%;
-    margin: 20px auto;
+    flex-direction: column;
+    justify-content:space-around;
+    align-items: end;
+}
 }
 
 .headBtn {
@@ -134,7 +221,7 @@ button {
     font-size: 1.1rem;
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease;
-    width: 30%;
+    width: 80%;
     font-weight: 700;
     box-shadow: 0 1px 5px rgba(129, 161, 193, 0.6);
 }
