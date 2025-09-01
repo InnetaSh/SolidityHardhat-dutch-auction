@@ -29,7 +29,7 @@ contract AucEngine {
     event AuctionPayoutWithdrawn(address indexed seller, uint amount, uint auctionIndex);
     event Withdrawn(address indexed to, uint256 amount);
     event OwnerFeeWithdrawn(address indexed owner, uint amount, uint auctionIndex);
-
+    event ThankYou(address to, string message);
 
     constructor() {
         owner = msg.sender;
@@ -183,6 +183,11 @@ contract AucEngine {
         return auctions[index].item;
     }
 
+      function getAuctionWinner(uint index) external view returns (address) {
+        require(index < auctions.length, "Invalid index");
+        return auctions[index].winner;
+    }
+
     function getAuctionIsStopped(uint index) external view returns (bool) {
         require(index < auctions.length, "Invalid index");
         return auctions[index].stopped;
@@ -216,6 +221,10 @@ contract AucEngine {
             auc.feeWithdrawn,
             auc.winner
         );
+    }
+
+    function sayThanks(address to, string calldata message) external onlyOwner {
+        emit ThankYou(to, message);
     }
 
 

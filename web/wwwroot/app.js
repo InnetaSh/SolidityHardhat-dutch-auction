@@ -1,16 +1,21 @@
-(async function () {
+﻿(async function () {
  
     const contractAddrEl = document.getElementById('contractAddr');
     const errorDiv = document.getElementById('error');
 
     const auctionInfoSection = document.getElementById('auction-startPage');
+    const accauntInfo = document.getElementById('accauntInfo');
     
     const showCreateBtn = document.getElementById('showCreateBtn');
     const showChoiseBtn = document.getElementById('showChoiseBtn');
+    const showAccauntBtn = document.getElementById('showAccauntBtn');
     const choiseBtn = document.getElementById('choiseBtn');
 
-    document.getElementById('createBtn').onclick = createAuction;
-    document.getElementById('buyBtn').onclick = buyAuction;
+    const buyBtn = document.getElementById('buyBtn');
+    const createBtn = document.getElementById('createBtn');
+
+    createBtn.onclick = createAuction;
+    buyBtn.onclick = buyAuction;
     
 
 
@@ -18,6 +23,7 @@
     let isConnecting = false;
     let isStopped = false;
     let priceInterval;
+
 
     async function loadConfig() {
         const res = await fetch('contractConfig.json');
@@ -83,12 +89,18 @@
             container.classList.remove('non-display');
             console.log(index);
 
+
+            const thankYouDiv = document.getElementById('thankYouMsg');
+            thankYouDiv.innerHTML = `  `;
+
+            buyBtn.classList.remove('non-display');
+
             if (index === '') return;
             
             const auction = await contract.getAuction(index);
 
             
-            const [
+             const [
                 seller,
                 startingPrice,
                 finalPrice,
@@ -198,6 +210,21 @@
 
             const tx = await contract.buy(index, {value: price });
             await tx.wait();
+
+
+            const winner = await contract.getAuctionWinner(index);
+            console.log('Auction bought! Winner: ' + winner);
+            document.getElementById('auction-winner').textContent = `Winner: ${winner.toString()}`;
+
+
+            const item = await contract.getAuctionItem(index);
+            const thankYouDiv = document.getElementById('thankYouMsg');
+            thankYouDiv.innerHTML = `
+                 🎉  ${item} — покупка выполнена успешно!<br>
+            `;
+
+            buyBtn.classList.add('non-display');
+
             alert("Auction bought!");
               } catch (e) {
                 alert("Error: " + e.message);
@@ -236,7 +263,7 @@
         const isHidden = container.classList.toggle('non-display');
 
       
-        showCreateBtn.textContent = isHidden ? 'Create Auction' : 'Close Create Auction';
+        showCreateBtn.textContent = isHidden ? 'Create Auction' : 'Close create Auction';
     }
     function showChoiseContainer() {
         auctionInfoSection.classList.toggle('non-display');
@@ -244,7 +271,13 @@
         const isHidden = container.classList.toggle('non-display');
 
       
-        showChoiseBtn.textContent = isHidden ? 'Buy from Auction' : 'Close Buy from Auction';
+        showChoiseBtn.textContent = isHidden ? 'Buy from Auction' : 'Close buy from Auction';
+    }
+
+    function showAccauntInfoContainer() {
+        const isHidden = accauntInfo.classList.toggle('non-display');
+       
+        showAccauntBtn.textContent = isHidden ? 'Accaunt info' : 'Close accaunt info';
     }
 
 
@@ -252,6 +285,7 @@
 
     showCreateBtn.addEventListener('click', showCreateContainer);
     showChoiseBtn.addEventListener('click', showChoiseContainer);
+    showAccauntBtn.addEventListener('click', showAccauntInfoContainer);
     choiseBtn.addEventListener('click', choiseAuction);
 
 

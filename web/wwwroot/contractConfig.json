@@ -1,5 +1,5 @@
 {
-  "address": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
+  "address": "0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB",
   "abi": [
     {
       "inputs": [],
@@ -110,6 +110,25 @@
         }
       ],
       "name": "OwnerFeeWithdrawn",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "message",
+          "type": "string"
+        }
+      ],
+      "name": "ThankYou",
       "type": "event"
     },
     {
@@ -362,6 +381,25 @@
       "type": "function"
     },
     {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        }
+      ],
+      "name": "getAuctionWinner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [],
       "name": "getAuctionsLength",
       "outputs": [
@@ -404,6 +442,24 @@
         }
       ],
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "message",
+          "type": "string"
+        }
+      ],
+      "name": "sayThanks",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
