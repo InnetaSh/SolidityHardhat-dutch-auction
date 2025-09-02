@@ -13,9 +13,12 @@
     const choiseBtn = document.getElementById('choiseBtn');
 
     const WithdrawBtn = document.getElementById('WithdrawBtn');
+    const WithdrawAllBtn = document.getElementById('WithdrawAllBtn');
 
     const closeBuyAuctionBtn = document.getElementById('closeBuyAuctionBtn');
     const closeCreateAuctionBtn = document.getElementById('closeCreateAuctionBtn');
+    const closeAccauntInfoBtn = document.getElementById('closeAccauntInfoBtn');
+    const closeInfoAuctionBtn = document.getElementById('closeInfoAuctionBtn');
 
     const buyBtn = document.getElementById('buyBtn');
     const createBtn = document.getElementById('createBtn');
@@ -29,7 +32,7 @@
     let isConnecting = false;
     let isStopped = false;
     let priceInterval;
-
+    let index;
 
     async function loadConfig() {
         const res = await fetch('contractConfig.json');
@@ -59,14 +62,8 @@
         await provider.send("eth_requestAccounts", []);
         signer = await provider.getSigner();
         contract = new ethers.Contract(cfg.address, cfg.abi, signer);
-
-
-     
-            const bal = await contract.getContractBalance();
-            console.log(bal);
-            contractBal.textContent = bal;
-
-
+        
+        await refreshBalance();
         await loadAuctions();
 
         } catch (e) {
@@ -74,6 +71,14 @@
         } finally {
             isConnecting = false; 
         }
+    }
+
+    async function refreshBalance() {
+        const bal = await provider.getBalance(cfg.address); 
+        const formatted = ethers.formatEther(bal);
+        contractBal.textContent = formatted + ' ETH';
+
+        return formatted;
     }
 
     async function createAuction() {
@@ -97,7 +102,7 @@
         try {
             auctionInfoSection.classList.add('non-display');
             const select = document.getElementById('id_auctionIndex');
-            const index = select.value;
+            index = select.value;
 
             const container = document.getElementById('info-auction');
             container.classList.remove('non-display');
@@ -162,6 +167,7 @@
 
             } else {
                 document.getElementById('auction-stopped').textContent = ``;
+                document.getElementById('auction-winner').textContent = ``;
             }
 
 
@@ -191,7 +197,7 @@
                     
                     console.log("Calculated priceNow:", priceNow); 
 
-                    document.getElementById('auction-priceNow').textContent = `Current price: ${priceNow} wei`;
+                    document.getElementById('auction-priceNow').innerHTML = `Current price: <h3>${priceNow} wei</h3>`;
 
                 } catch (e) {
                     console.error("Error inside interval: ", e); 
@@ -208,7 +214,7 @@
     async function buyAuction() {
         try {
             const select = document.getElementById('id_auctionIndex');
-            const index = select.value;
+            index = select.value;
             console.log(index);
 
             isStopped = await contract.getAuctionIsStopped(index);
@@ -254,7 +260,7 @@
 
 
     async function loadAuctions() {
-        console.log("length");
+       
         const select = document.getElementById('id_auctionIndex');
         const auctionsCount = await contract.getAuctionsLength();
 
@@ -314,11 +320,76 @@
       
     }
 
-    function showAccauntInfoContainer() {
-        const isHidden = accauntInfo.classList.toggle('non-display');
-       
-        showAccauntBtn.textContent = isHidden ? 'Accaunt info' : 'Close accaunt info';
+    async function showAccauntInfoContainer() {
+        const bal = await refreshBalance();
+        await getPendingPlatformFees();
+        
+        if (parseFloat(bal) === 0) {
+            WithdrawAllBtn.classList.add('non-display');
+        }
+
+        accauntInfo.classList.remove('non-display'); 
     }
+
+    function closeAccauntInfoContainer() {
+        accauntInfo.classList.add('non-display');
+    }
+
+    function closeInfoContainer() {
+        document.getElementById('info-auction').classList.add('non-display');
+        accauntInfo.classList.remove('non-display'); 
+    }
+
+
+    async function Withdraw() {
+        try {
+            const tx = await contract.withdrawFromAuction(index);
+            log('Вывод средств: ' + tx.hash);
+            await tx.wait();
+            log('Вывод завершён');
+        } catch (e) {
+            log('Ошибка при выводе: ' + (e?.reason || e.message));
+        }
+    }
+
+    async function WithdrawAllFromAucttion() {
+        try {
+            const tx = await contract.ownerWithdrawAllFees();
+            log('Вывод средств: ' + tx.hash);
+            await tx.wait();
+            await refreshBalance();
+            await getPendingPlatformFees();
+            WithdrawAllBtn.classList.add('non-display');
+            log('Вывод завершён');
+        } catch (e) {
+            log('Ошибка при выводе: ' + (e?.reason || e.message));
+        }
+    }
+
+    async function getPendingPlatformFees() {
+        try {
+            const items = await contract.getPendingPlatformFees();
+            const listElement = document.getElementById("listItem");
+
+            
+            listElement.innerHTML = '';
+
+            if (items.length === 0) {
+                WithdrawAllBtn.classList.add('non-display');
+                listElement.innerHTML = "<li>No pending items</li>";
+            } else {
+                WithdrawAllBtn.classList.remove('non-display');
+                items.forEach(item => {
+                    const li = document.createElement("li");
+                    li.textContent = item;
+                    listElement.appendChild(li);
+                });
+            }
+        } catch (error) {
+            console.error("Error fetching items:", error);
+        }
+    }
+
 
 
 
@@ -328,8 +399,13 @@
     showChoiseBtn.addEventListener('click', showChoiseContainer);
     closeBuyAuctionBtn.addEventListener('click', closeChoiseContainer);
     showAccauntBtn.addEventListener('click', showAccauntInfoContainer);
-    choiseBtn.addEventListener('click', choiseAuction);
+    closeAccauntInfoBtn.addEventListener('click', closeAccauntInfoContainer);
 
+    choiseBtn.addEventListener('click', choiseAuction);
+    closeInfoAuctionBtn.addEventListener('click', closeInfoContainer);
+
+    WithdrawBtn.addEventListener('click', Withdraw);
+    WithdrawAllBtn.addEventListener('click', WithdrawAllFromAucttion);
 
 
     window.onload = connect;

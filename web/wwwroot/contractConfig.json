@@ -1,5 +1,5 @@
 {
-  "address": "0x70e0bA845a1A0F2DA3359C97E0285013525FFC49",
+  "address": "0x36C02dA8a0983159322a80FFE9F24b1acfF8B570",
   "abi": [
     {
       "inputs": [],
@@ -426,6 +426,19 @@
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "getPendingPlatformFees",
+      "outputs": [
+        {
+          "internalType": "string[]",
+          "name": "",
+          "type": "string[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "uint256",
@@ -455,6 +468,13 @@
         }
       ],
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "ownerWithdrawAllFees",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {

@@ -110,25 +110,6 @@ contract AucEngine {
 
 
     
-    function _withdrawFromAuction(uint index) internal {
-        Auction storage auc = auctions[index];
-
-        require(auc.stopped, "Auction is not stopped yet");
-        require(!auc.withdrawn, "Funds already withdrawn");
-        require(auc.seller == msg.sender, "Only seller can withdraw");
-
-        uint payout = auc.finalPrice - (auc.finalPrice * FEE / 100);
-        auc.withdrawn = true;
-
-        (bool ok, ) = auc.seller.call{value: payout}("");
-        require(ok, "Withdrawal failed");
-
-        emit Withdrawn(msg.sender, payout);
-        emit AuctionPayoutWithdrawn(msg.sender, payout, index);
-    }
-
-
-    
     function withdrawFromAuction(uint index) external {
         require(index < auctions.length, "Invalid auction index");
 
@@ -163,6 +144,26 @@ contract AucEngine {
         require(ok, "Owner fee withdraw failed");
 
         emit OwnerFeeWithdrawn(owner, fee, index);
+    }
+
+    function ownerWithdrawAllFees() external onlyOwner {
+        for (uint i = 0; i < auctions.length; i++) {
+            Auction storage auc = auctions[i];
+
+            if (
+                auc.stopped &&
+                !auc.feeWithdrawn &&
+                auc.finalPrice > 0
+            ) {
+                uint fee = (auc.finalPrice * FEE) / 100;
+                auc.feeWithdrawn = true;
+
+                (bool ok, ) = payable(owner).call{value: fee}("");
+                require(ok, "Fee withdraw failed");
+
+                emit OwnerFeeWithdrawn(owner, fee, i);
+            }
+        }
     }
 
     function stopAuctionIfExpired(uint index) external {
@@ -230,6 +231,39 @@ contract AucEngine {
 
     function sayThanks(address to, string calldata message) external onlyOwner {
         emit ThankYou(to, message);
+    }
+
+
+    function getPendingPlatformFees() external view onlyOwner returns (string[] memory) {
+        uint count = 0;
+
+         for (uint i = 0; i < auctions.length; i++) {
+            if (
+                auctions[i].stopped &&
+                !auctions[i].feeWithdrawn &&
+                auctions[i].finalPrice > 0
+            ) {
+                count++;
+            }
+        }
+
+        
+        string[] memory pendingItems = new string[](count);
+        uint idx = 0;
+
+       
+        for (uint i = 0; i < auctions.length; i++) {
+            if (
+                auctions[i].stopped &&
+                !auctions[i].feeWithdrawn &&
+                auctions[i].finalPrice > 0
+            ) {
+                pendingItems[idx] = auctions[i].item;
+                idx++;
+            }
+        }
+
+        return pendingItems;
     }
 
 
